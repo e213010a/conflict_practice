@@ -20,6 +20,16 @@ app.post("/api/messages", async (req, res) => {
   res.json({ success: true, message });
 });
 
+// メッセージ一覧を取得するAPI
+app.get("/api/messages", async (req, res) => {
+  const messages = await prisma.message.findMany({
+    orderBy: { createdAt: "desc" }, // 新しい順
+  });
+
+  console.log("[SERVER] DBからメッセージ取得:", messages.length, "件");
+  res.json(messages);
+});
+
 app.listen(3000, () => {
   console.log("[SERVER] http://localhost:3000 で起動中");
 });

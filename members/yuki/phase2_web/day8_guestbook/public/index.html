@@ -2,6 +2,73 @@
 <html>
   <head>
     <title>ゲストブック</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 0 16px;
+        background: #f5f5f5;
+        color: #333;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 24px;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        margin-bottom: 24px;
+      }
+
+      input {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      button {
+        padding: 8px;
+        background: #4a90e2;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #357abd;
+      }
+
+      .message {
+        background: #fff;
+        padding: 12px 16px;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        margin-bottom: 12px;
+      }
+
+      .message strong {
+        font-size: 1rem;
+      }
+
+      .message p {
+        margin: 4px 0;
+      }
+
+      .message small {
+        color: #999;
+      }
+    </style>
   </head>
   <body>
     <h1>ゲストブック</h1>
@@ -12,7 +79,31 @@
       <button type="submit">送信</button>
     </form>
 
+    <div id="messages"></div>
+
     <script>
+      // ページ読み込み時にメッセージを取得
+      async function loadMessages() {
+        const response = await fetch("/api/messages");
+        const messages = await response.json();
+
+        const container = document.getElementById("messages");
+        container.innerHTML = messages
+          .map(
+            (m) => `
+          <div class="message">
+            <strong>${m.name}</strong>
+            <p>${m.content}</p>
+            <small>${new Date(m.createdAt).toLocaleString()}</small>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      // ページ読み込み時に実行
+      loadMessages();
+
       document.getElementById("form").addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -29,6 +120,7 @@
         console.log("[CLIENT] 送信結果:", data);
 
         e.target.reset();
+        loadMessages(); // 送信後に一覧を更新
       });
     </script>
   </body>
