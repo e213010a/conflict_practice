@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ゲストブック</title>
+  </head>
+  <body>
+    <h1>ゲストブック</h1>
+
+    <form id="form">
+      <input type="text" id="name" placeholder="名前" required />
+      <input type="text" id="content" placeholder="メッセージ" required />
+      <button type="submit">送信</button>
+    </form>
+
+    <script>
+      document.getElementById("form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value;
+        const content = document.getElementById("content").value;
+
+        const response = await fetch("/api/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, content }),
+        });
+
+        const data = await response.json();
+        console.log("[CLIENT] 送信結果:", data);
+
+        e.target.reset();
+      });
+    </script>
+  </body>
+</html>
